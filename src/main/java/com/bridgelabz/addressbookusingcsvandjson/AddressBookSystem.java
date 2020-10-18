@@ -10,10 +10,11 @@ public class AddressBookSystem {
 		AddressBook addressBookMain = new AddressBook();
 		AddressBookFileNIO addBookFileNIO = new AddressBookFileNIO();
 		OpenCSVService openCSVService = new OpenCSVService();
+		JSONService jsonService = new JSONService();
 		Scanner input = new Scanner(System.in);
 
 		while (true) {
-			System.out.println("Choose the option between 1 - 9");
+			System.out.println("Choose the option between 1 - 18");
 			System.out.println("1. Add address book to the system");
 			System.out.println("2. Edit contact details of the address book");
 			System.out.println("3. Delete contact details of the address book");
@@ -29,7 +30,9 @@ public class AddressBookSystem {
 			System.out.println("13. Reading data from file");
 			System.out.println("14. Writing data to CSV");
 			System.out.println("15. Reading data from CSV");
-			System.out.println("16. Exit");
+			System.out.println("16. Writing data to JSON");
+			System.out.println("17. Reading data from JSON");
+			System.out.println("18. Exit");
 
 			String option = input.next();
 
@@ -237,7 +240,29 @@ public class AddressBookSystem {
 			// Reading data from CSV
 			if (option.equals("15")) {
 				try {
-					 openCSVService.readCsv();
+					openCSVService.readCsv();
+				} catch (Exception e) {
+					System.out.println(e.getMessage());
+				}
+				continue;
+			}
+
+			// Writing data into JSON
+			if (option.equals("16")) {
+				try {
+					jsonService.writeJson(addressBookMain.getAddressBookSystem());
+				} catch (Exception e) {
+					e.getMessage();
+				}
+				continue;
+			}
+
+			// Reading data from JSON
+			if (option.equals("17")) {
+				int x=0;
+				try {
+					x=jsonService.readJson();
+					System.out.println(x);
 				} catch (Exception e) {
 					System.out.println(e.getMessage());
 				}
@@ -245,7 +270,7 @@ public class AddressBookSystem {
 			}
 
 			// Exiting from the address book system
-			if (option.equals("16")) {
+			if (option.equals("18")) {
 				System.out.println("Thank you.");
 				break;
 			} else
