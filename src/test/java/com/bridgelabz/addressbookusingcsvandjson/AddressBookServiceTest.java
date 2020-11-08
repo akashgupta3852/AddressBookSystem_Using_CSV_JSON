@@ -60,7 +60,7 @@ public class AddressBookServiceTest {
 	// Retrieving Contacts from the Database that were added in a particular period
 	@Test
 	public void givenDateRange_WhenRetrieved_ShouldReturnExactCount() {
-		List<ContactPersonDB> contactPersonList = addressBookService.getContactsByDateRange("2019-04-01", "2020-11-04");
+		List<ContactsDB> contactPersonList = addressBookService.getContactsByDateRange("2019-04-01", "2020-11-04");
 		Assert.assertEquals(5, contactPersonList.size());
 	}
 
@@ -68,7 +68,7 @@ public class AddressBookServiceTest {
 	@Test
 	public void givenAddressBookInDB_WhenRetrievedContactsByCity_ShouldReturnExactCount() {
 		addressBookService.readContactPersonDetails(DB_IO);
-		List<ContactPersonDB> contactPersonList = addressBookService.getContactsByCity(DB_IO, "Varanasi");
+		List<ContactsDB> contactPersonList = addressBookService.getContactsByCity(DB_IO, "Varanasi");
 		Assert.assertEquals(3, contactPersonList.size());
 	}
 
@@ -76,7 +76,7 @@ public class AddressBookServiceTest {
 	@Test
 	public void givenAddressBookInDB_WhenRetrievedContactsByState_ShouldReturnExactCount() {
 		addressBookService.readContactPersonDetails(DB_IO);
-		List<ContactPersonDB> contactPersonList = addressBookService.getContactsByState(DB_IO, "U.P.");
+		List<ContactsDB> contactPersonList = addressBookService.getContactsByState(DB_IO, "U.P.");
 		Assert.assertEquals(5, contactPersonList.size());
 	}
 
@@ -93,12 +93,12 @@ public class AddressBookServiceTest {
 	// Adding multiple address book data using threads and without using threads
 	@Test
 	public void given3AddressBookData_WhenAddedToDB_ShouldBeSyncWithDB() {
-		ContactPersonDB[] arrayOfContacts = {
-				new ContactPersonDB("Radha", "Gupta", "9487986852", "radha@yahoo.co.in", 24, 2, 101, LocalDate.now(),
+		ContactsDB[] arrayOfContacts = {
+				new ContactsDB("Radha", "Gupta", "9487986852", "radha@yahoo.co.in", 24, 2, 101, LocalDate.now(),
 						"Rampur", "Surat", "Gujarat", "456987"),
-				new ContactPersonDB("Mohan", "Singh", "9875893678", "mohan@yahoo.co.in", 25, 1, 104, LocalDate.now(),
+				new ContactsDB("Mohan", "Singh", "9875893678", "mohan@yahoo.co.in", 25, 1, 104, LocalDate.now(),
 						"Huda City", "Gurgaon", "Haryana", "217894"),
-				new ContactPersonDB("Golu", "Jee", "8895874391", "golu@yahoo.co.in", 26, 3, 103, LocalDate.now(),
+				new ContactsDB("Golu", "Jee", "8895874391", "golu@yahoo.co.in", 26, 3, 103, LocalDate.now(),
 						"Airoli Campus", "Mumbai", "Maharastra", "148979") };
 		Instant start = Instant.now();
 		addressBookService.readContactPersonDetails(DB_IO);
@@ -106,9 +106,9 @@ public class AddressBookServiceTest {
 		Instant end = Instant.now();
 		System.out.println("Duration without Thread; " + Duration.between(start, end));
 		Instant threadStart = Instant.now();
-		addressBookService.addaddContactsToDBWithThreads(Arrays.asList(arrayOfContacts));
+		addressBookService.addContactsToDBWithThreads(Arrays.asList(arrayOfContacts));
 		Instant threadEnd = Instant.now();
 		System.out.println("Duration with Thread; " + Duration.between(threadStart, threadEnd));
-		Assert.assertEquals(19, addressBookService.getContactPersonDetails(DB_IO));
+		Assert.assertEquals(19, addressBookService.countEntries(DB_IO));
 	}
 }

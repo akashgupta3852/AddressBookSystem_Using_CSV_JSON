@@ -83,7 +83,7 @@ public class AddressBookDBService {
 		return count;
 	}
 
-	public List<ContactPersonDB> readContactPersonDetails() {
+	public List<ContactsDB> readContactPersonDetails() {
 		String query = "SELECT * FROM contact_person_details;";
 		try (Connection con = this.getConnection();) {
 			preparedStatement = con.prepareStatement(query);
@@ -95,7 +95,7 @@ public class AddressBookDBService {
 		return null;
 	}
 
-	public List<ContactPersonDB> getContactPersonData(String firstName, String lastName) {
+	public List<ContactsDB> getContactPersonData(String firstName, String lastName) {
 		String query = "select * from contact_person_details where first_name = ? and last_name =?;";
 		try (Connection con = this.getConnection();) {
 			preparedStatement = con.prepareStatement(query);
@@ -109,8 +109,8 @@ public class AddressBookDBService {
 		return null;
 	}
 
-	private List<ContactPersonDB> getContactPersonList(ResultSet resultSet) {
-		List<ContactPersonDB> contactPersonList = new ArrayList<>();
+	private List<ContactsDB> getContactPersonList(ResultSet resultSet) {
+		List<ContactsDB> contactPersonList = new ArrayList<>();
 		try {
 			while (resultSet.next()) {
 				int id = resultSet.getInt("person_id");
@@ -122,8 +122,8 @@ public class AddressBookDBService {
 				int typeId = resultSet.getInt("type_id");
 				int bookId = resultSet.getInt("book_id");
 				LocalDate dateAdded = resultSet.getDate("date_added").toLocalDate();
-				contactPersonList.add(new ContactPersonDB(id, firstName, lastName, phoneNo, email, addressId, typeId,
-						bookId, dateAdded));
+				contactPersonList.add(
+						new ContactsDB(id, firstName, lastName, phoneNo, email, addressId, typeId, bookId, dateAdded));
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -145,7 +145,7 @@ public class AddressBookDBService {
 		return 0;
 	}
 
-	public List<ContactPersonDB> getContactsByDateRange(String fromDate, String toDate) {
+	public List<ContactsDB> getContactsByDateRange(String fromDate, String toDate) {
 		String query = "select * from contact_person_details where date_added between Cast(? as Date) and Cast(? as Date)";
 		try (Connection con = this.getConnection();) {
 			preparedStatement = con.prepareStatement(query);
@@ -159,7 +159,7 @@ public class AddressBookDBService {
 		return null;
 	}
 
-	public List<ContactPersonDB> getContactsByCity(String cityName) {
+	public List<ContactsDB> getContactsByCity(String cityName) {
 		String query = "select * from contact_person_details c, address_details a where c.ad_id = a.address_id and city = ?;";
 		try (Connection con = this.getConnection();) {
 			preparedStatement = con.prepareStatement(query);
@@ -172,7 +172,7 @@ public class AddressBookDBService {
 		return null;
 	}
 
-	public List<ContactPersonDB> getContactsByState(String stateName) {
+	public List<ContactsDB> getContactsByState(String stateName) {
 		String query = "select * from contact_person_details c, address_details a where c.ad_id = a.address_id and state = ?;";
 		try (Connection con = this.getConnection();) {
 			preparedStatement = con.prepareStatement(query);
@@ -185,7 +185,7 @@ public class AddressBookDBService {
 		return null;
 	}
 
-	public ContactPersonDB addAddressBookDataInDB(String firstName, String lastName, String phoneNo, String email,
+	public ContactsDB addAddressBookDataInDB(String firstName, String lastName, String phoneNo, String email,
 			int addressId, int typeId, int bookId, String dateAdded, String address, String cityName, String stateName,
 			String zip) {
 		String query = "insert into contact_person_details (first_name, last_name, phone_no, email, ad_id, type_id, book_id, date_added) values (?, ?, ?, ?, ?, ?, ?, Cast(? as Date));";
@@ -214,7 +214,7 @@ public class AddressBookDBService {
 			resultSet.next();
 			int personId = resultSet.getInt("person_id");
 			addAddressDetails(addressId, address, cityName, stateName, zip, connection);
-			return new ContactPersonDB(personId, firstName, lastName, phoneNo, email, addressId, typeId, bookId,
+			return new ContactsDB(personId, firstName, lastName, phoneNo, email, addressId, typeId, bookId,
 					LocalDate.parse(dateAdded, DateTimeFormatter.ofPattern("yyyy-MM-dd")));
 		} catch (SQLException e) {
 			e.printStackTrace();

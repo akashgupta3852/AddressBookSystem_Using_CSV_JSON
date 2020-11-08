@@ -6,36 +6,44 @@ import java.util.List;
 import java.util.Map;
 
 public class AddressBookService {
-	private List<ContactPersonDB> contactPersonList;
+	private List<ContactPerson> contactPersonList;
+	private List<ContactsDB> contactsList;
 	private AddressBookDBService addressBookDBService;
 
 	public enum IOService {
-		DB_IO
+		DB_IO, REST_IO
 	}
 
 	public AddressBookService() {
 		addressBookDBService = AddressBookDBService.getInstance();
-		contactPersonList = new ArrayList<>();
 	}
 
+	public AddressBookService(List<ContactPerson> contactsList) {
+		this.contactPersonList = new ArrayList<>(contactsList);
+	}
+
+	// Counting the total entries of address_book_name table
 	public long getAddressBookName(IOService ioService) {
 		if (ioService.equals(IOService.DB_IO))
 			return addressBookDBService.readAddressBookName();
 		return 0;
 	}
 
+	// Counting the total entries of address_book_type table
 	public long getAddressBookType(IOService ioService) {
 		if (ioService.equals(IOService.DB_IO))
 			return addressBookDBService.readAddressBookType();
 		return 0;
 	}
 
+	// Counting the total entries of address_details table
 	public long getAddressDetails(IOService ioService) {
 		if (ioService.equals(IOService.DB_IO))
 			return addressBookDBService.readAddressDetails();
 		return 0;
 	}
 
+	// Counting the total entries of contact_person_details table
 	public long getContactPersonDetails(IOService ioService) {
 		if (ioService.equals(IOService.DB_IO))
 			return addressBookDBService.readContactPersonDetails().size();
@@ -45,7 +53,7 @@ public class AddressBookService {
 	// Reading contacts from the database
 	public void readContactPersonDetails(IOService ioService) {
 		if (ioService.equals(IOService.DB_IO))
-			contactPersonList = addressBookDBService.readContactPersonDetails();
+			contactsList = addressBookDBService.readContactPersonDetails();
 	}
 
 	// Updating the phone number in database
@@ -53,15 +61,15 @@ public class AddressBookService {
 		int result = addressBookDBService.updatePhoneNo(firstName, lastName, phoneNo);
 		if (result == 0)
 			return;
-		ContactPersonDB contactPersonDB = this.getContactPersonData(firstName, lastName);
+		ContactsDB contactPersonDB = this.getContactPersonData(firstName, lastName);
 		if (contactPersonDB != null) {
 			contactPersonDB.setPhoneNo(phoneNo);
 		}
 	}
 
 	// Retrieving contacts from database
-	private ContactPersonDB getContactPersonData(String firstName, String lastName) {
-		ContactPersonDB contactPersonDB = this.contactPersonList.stream()
+	private ContactsDB getContactPersonData(String firstName, String lastName) {
+		ContactsDB contactPersonDB = this.contactsList.stream()
 				.filter(contactPersonListItem -> contactPersonListItem.getFirstName().equals(firstName)
 						&& contactPersonListItem.getLastName().equals(lastName))
 				.findFirst().orElse(null);
@@ -70,27 +78,27 @@ public class AddressBookService {
 
 	// Checking whether contacts are sync or not after adding to DB
 	public boolean checkContactPersonDetailsInSyncWithDB(String firstName, String lastName) {
-		List<ContactPersonDB> contactPersonList = addressBookDBService.getContactPersonData(firstName, lastName);
-		if (contactPersonList.size() == 0)
+		List<ContactsDB> contactsList = addressBookDBService.getContactPersonData(firstName, lastName);
+		if (contactsList.size() == 0)
 			return false;
 		else
-			return contactPersonList.get(0).equals(getContactPersonData(firstName, lastName));
+			return contactsList.get(0).equals(getContactPersonData(firstName, lastName));
 	}
 
 	// Retrieving all the contacts which were added in a particular period
-	public List<ContactPersonDB> getContactsByDateRange(String fromDate, String toDate) {
+	public List<ContactsDB> getContactsByDateRange(String fromDate, String toDate) {
 		return addressBookDBService.getContactsByDateRange(fromDate, toDate);
 	}
 
 	// Retrieving all the contacts by city name
-	public List<ContactPersonDB> getContactsByCity(IOService ioService, String cityName) {
+	public List<ContactsDB> getContactsByCity(IOService ioService, String cityName) {
 		if (ioService.equals(IOService.DB_IO))
 			return addressBookDBService.getContactsByCity(cityName);
 		return null;
 	}
 
 	// Retrieving all the contacts by state name
-	public List<ContactPersonDB> getContactsByState(IOService ioService, String stateName) {
+	public List<ContactsDB> getContactsByState(IOService ioService, String stateName) {
 		if (ioService.equals(IOService.DB_IO))
 			return addressBookDBService.getContactsByState(stateName);
 		return null;
@@ -99,12 +107,12 @@ public class AddressBookService {
 	// Adding a address book data to database
 	public void addAddressBookDataInDB(String firstName, String lastName, String phoneNo, String email, int addressId,
 			int typeId, int bookId, String dateAdded, String address, String cityName, String stateName, String zip) {
-		contactPersonList.add(addressBookDBService.addAddressBookDataInDB(firstName, lastName, phoneNo, email,
-				addressId, typeId, bookId, dateAdded, address, cityName, stateName, zip));
+		contactsList.add(addressBookDBService.addAddressBookDataInDB(firstName, lastName, phoneNo, email, addressId,
+				typeId, bookId, dateAdded, address, cityName, stateName, zip));
 	}
 
 	// Adding multiple address book data without using threads
-	public void addContactsToDB(List<ContactPersonDB> contactsList) {
+	public void addContactsToDB(List<ContactsDB> contactsList) {
 		contactsList.forEach(contactPersonData -> {
 			this.addAddressBookDataInDB(contactPersonData.getFirstName(), contactPersonData.getLastName(),
 					contactPersonData.getPhoneNo(), contactPersonData.getEmail(), contactPersonData.getAddressId(),
@@ -115,7 +123,7 @@ public class AddressBookService {
 	}
 
 	// Adding multiple address book data using threads
-	public void addaddContactsToDBWithThreads(List<ContactPersonDB> contactsList) {
+	public void addContactsToDBWithThreads(List<ContactsDB> contactsList) {
 		Map<Integer, Boolean> contactsAdditionStatus = new HashMap<Integer, Boolean>();
 		contactsList.forEach(contactPersonData -> {
 			Runnable task = () -> {
@@ -137,5 +145,20 @@ public class AddressBookService {
 				e.printStackTrace();
 			}
 		}
+	}
+
+	// Counting the total entries in the given ioService
+	public long countEntries(IOService ioService) {
+		if (ioService.equals(IOService.REST_IO))
+			return contactPersonList.size();
+		if (ioService.equals(IOService.DB_IO))
+			return contactsList.size();
+		return 0;
+	}
+
+	// Adding a contact person to the Json server
+	public void addContactPerson(ContactPerson contactPerson, IOService ioService) {
+		if (ioService.equals(IOService.REST_IO))
+			contactPersonList.add(contactPerson);
 	}
 }

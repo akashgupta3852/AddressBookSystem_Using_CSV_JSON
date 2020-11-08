@@ -2,14 +2,14 @@ package com.bridgelabz.addressbookusingcsvandjson;
 
 import java.time.LocalDate;
 
-public class ContactPersonDB {
+public class ContactsDB {
 	private int personId;
 	private String firstName, lastName, phoneNo, email;
 	private int addressId, typeId, bookId;
 	private LocalDate dateAdded;
 	private String address, cityName, stateName, zip;
 
-	public ContactPersonDB(int personId, String firstName, String lastName, String phoneNo, String email, int addressId,
+	public ContactsDB(int personId, String firstName, String lastName, String phoneNo, String email, int addressId,
 			int typeId, int bookId, LocalDate dateAdded) {
 		this.personId = personId;
 		this.firstName = firstName;
@@ -22,7 +22,7 @@ public class ContactPersonDB {
 		this.dateAdded = dateAdded;
 	}
 
-	public ContactPersonDB(String firstName, String lastName, String phoneNo, String email, int addressId, int typeId,
+	public ContactsDB(String firstName, String lastName, String phoneNo, String email, int addressId, int typeId,
 			int bookId, LocalDate dateAdded, String address, String cityName, String stateName, String zip) {
 		this.firstName = firstName;
 		this.lastName = lastName;
@@ -144,9 +144,9 @@ public class ContactPersonDB {
 
 	@Override
 	public String toString() {
-		return "ContactPersonDB [personId=" + personId + ", firstName=" + firstName + ", lastName=" + lastName
-				+ ", phoneNo=" + phoneNo + ", email=" + email + ", addressId=" + addressId + ", typeId=" + typeId
-				+ ", bookId=" + bookId + ", dateAdded=" + dateAdded + "]";
+		return "ContactsDB [personId=" + personId + ", firstName=" + firstName + ", lastName=" + lastName + ", phoneNo="
+				+ phoneNo + ", email=" + email + ", addressId=" + addressId + ", typeId=" + typeId + ", bookId="
+				+ bookId + ", dateAdded=" + dateAdded + "]";
 	}
 
 	@Override
@@ -177,7 +177,7 @@ public class ContactPersonDB {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		ContactPersonDB other = (ContactPersonDB) obj;
+		ContactsDB other = (ContactsDB) obj;
 		if (address == null) {
 			if (other.address != null)
 				return false;
