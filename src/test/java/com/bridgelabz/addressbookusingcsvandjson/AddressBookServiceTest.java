@@ -6,6 +6,10 @@ import org.junit.Test;
 
 import static com.bridgelabz.addressbookusingcsvandjson.AddressBookService.IOService.*;
 
+import java.time.Duration;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.List;
 
 public class AddressBookServiceTest {
@@ -78,11 +82,33 @@ public class AddressBookServiceTest {
 
 	// Adding new address book data into database
 	@Test
-	public void givenAddressBookData_WhenAdded_ShouldBeSyncWithDB() {
+	public void givenAddressBookData_WhenAddedToDB_ShouldBeSyncWithDB() {
 		addressBookService.readContactPersonDetails(DB_IO);
 		addressBookService.addAddressBookDataInDB("Meera", "Devi", "9415829547", "meera3377@gmail.com", 23, 1, 104,
 				"2020-11-05", "Station Road", "Gwalior", "M.P.", "516899");
 		boolean result = addressBookService.checkContactPersonDetailsInSyncWithDB("Meera", "Devi");
 		Assert.assertTrue(result);
+	}
+
+	// Adding multiple address book data using threads and without using threads
+	@Test
+	public void given3AddressBookData_WhenAddedToDB_ShouldBeSyncWithDB() {
+		ContactPersonDB[] arrayOfContacts = {
+				new ContactPersonDB("Radha", "Gupta", "9487986852", "radha@yahoo.co.in", 24, 2, 101, LocalDate.now(),
+						"Rampur", "Surat", "Gujarat", "456987"),
+				new ContactPersonDB("Mohan", "Singh", "9875893678", "mohan@yahoo.co.in", 25, 1, 104, LocalDate.now(),
+						"Huda City", "Gurgaon", "Haryana", "217894"),
+				new ContactPersonDB("Golu", "Jee", "8895874391", "golu@yahoo.co.in", 26, 3, 103, LocalDate.now(),
+						"Airoli Campus", "Mumbai", "Maharastra", "148979") };
+		Instant start = Instant.now();
+		addressBookService.readContactPersonDetails(DB_IO);
+		addressBookService.addContactsToDB(Arrays.asList(arrayOfContacts));
+		Instant end = Instant.now();
+		System.out.println("Duration without Thread; " + Duration.between(start, end));
+		Instant threadStart = Instant.now();
+		addressBookService.addaddContactsToDBWithThreads(Arrays.asList(arrayOfContacts));
+		Instant threadEnd = Instant.now();
+		System.out.println("Duration with Thread; " + Duration.between(threadStart, threadEnd));
+		Assert.assertEquals(19, addressBookService.getContactPersonDetails(DB_IO));
 	}
 }

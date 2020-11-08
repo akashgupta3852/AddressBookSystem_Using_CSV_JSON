@@ -238,6 +238,7 @@ public class AddressBookDBService {
 			preparedStatement.setString(3, cityName);
 			preparedStatement.setString(4, stateName);
 			preparedStatement.setString(5, zip);
+			preparedStatement.executeUpdate();
 			connection.commit();
 		} catch (SQLException e) {
 			e.printStackTrace();
