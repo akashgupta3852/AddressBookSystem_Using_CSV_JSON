@@ -56,4 +56,8 @@ public class AddressBookService {
 		List<ContactPersonDB> contactPersonList = addressBookDBService.getContactPersonData(firstName, lastName);
 		return contactPersonList.get(0).equals(getContactPersonData(firstName, lastName));
 	}
+
+	public List<ContactPersonDB> findContactPersonByDateRange(String fromDate, String toDate) {
+		return addressBookDBService.findContactPersonByDateRange(fromDate, toDate);
+	}
 }

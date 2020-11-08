@@ -1,12 +1,15 @@
 package com.bridgelabz.addressbookusingcsvandjson;
 
+import java.time.LocalDate;
+
 public class ContactPersonDB {
 	private int personId;
 	private String firstName, lastName, phoneNo, email;
 	private int addressId, typeId, bookId;
+	private LocalDate dateAdded;
 
 	public ContactPersonDB(int personId, String firstName, String lastName, String phoneNo, String email, int addressId,
-			int typeId, int bookId) {
+			int typeId, int bookId, LocalDate dateAdded) {
 		this.personId = personId;
 		this.firstName = firstName;
 		this.lastName = lastName;
@@ -15,6 +18,7 @@ public class ContactPersonDB {
 		this.addressId = addressId;
 		this.typeId = typeId;
 		this.bookId = bookId;
+		this.dateAdded = dateAdded;
 	}
 
 	public int getPersonId() {
@@ -49,6 +53,10 @@ public class ContactPersonDB {
 		return bookId;
 	}
 
+	public LocalDate getDateAdded() {
+		return dateAdded;
+	}
+
 	public void setPersonId(int personId) {
 		this.personId = personId;
 	}
@@ -81,11 +89,15 @@ public class ContactPersonDB {
 		this.bookId = bookId;
 	}
 
+	public void setDateAdded(LocalDate dateAdded) {
+		this.dateAdded = dateAdded;
+	}
+
 	@Override
 	public String toString() {
 		return "ContactPersonDB [personId=" + personId + ", firstName=" + firstName + ", lastName=" + lastName
 				+ ", phoneNo=" + phoneNo + ", email=" + email + ", addressId=" + addressId + ", typeId=" + typeId
-				+ ", bookId=" + bookId + "]";
+				+ ", bookId=" + bookId + ", dateAdded=" + dateAdded + "]";
 	}
 
 	@Override
@@ -100,6 +112,11 @@ public class ContactPersonDB {
 		if (addressId != other.addressId)
 			return false;
 		if (bookId != other.bookId)
+			return false;
+		if (dateAdded == null) {
+			if (other.dateAdded != null)
+				return false;
+		} else if (!dateAdded.equals(other.dateAdded))
 			return false;
 		if (email == null) {
 			if (other.email != null)

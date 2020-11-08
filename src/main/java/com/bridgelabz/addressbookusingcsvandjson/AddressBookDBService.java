@@ -6,6 +6,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -119,7 +120,9 @@ public class AddressBookDBService {
 				int addressId = resultSet.getInt("ad_id");
 				int typeId = resultSet.getInt("type_id");
 				int bookId = resultSet.getInt("book_id");
-				contactPersonList.add(new ContactPersonDB(id, firstName, lastName, phoneNo, email, addressId, typeId, bookId));
+				LocalDate dateAdded = resultSet.getDate("date_added").toLocalDate();
+				contactPersonList.add(new ContactPersonDB(id, firstName, lastName, phoneNo, email, addressId, typeId,
+						bookId, dateAdded));
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -139,5 +142,19 @@ public class AddressBookDBService {
 			e.printStackTrace();
 		}
 		return 0;
+	}
+
+	public List<ContactPersonDB> findContactPersonByDateRange(String fromDate, String toDate) {
+		String query = "select * from contact_person_details where date_added between Cast(? as Date) and Cast(? as Date)";
+		try {
+			preparedStatement = this.getConnection().prepareStatement(query);
+			preparedStatement.setString(1, fromDate);
+			preparedStatement.setString(2, toDate);
+			ResultSet resultSet = preparedStatement.executeQuery();
+			return this.getContactPersonList(resultSet);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 }
