@@ -7,6 +7,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -182,5 +183,64 @@ public class AddressBookDBService {
 			e.printStackTrace();
 		}
 		return null;
+	}
+
+	public ContactPersonDB addAddressBookDataInDB(String firstName, String lastName, String phoneNo, String email,
+			int addressId, int typeId, int bookId, String dateAdded, String address, String cityName, String stateName,
+			String zip) {
+		String query = "insert into contact_person_details (first_name, last_name, phone_no, email, ad_id, type_id, book_id, date_added) values (?, ?, ?, ?, ?, ?, ?, Cast(? as Date));";
+		Connection connection = this.getConnection();
+		try {
+			connection.setAutoCommit(false);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		try {
+			preparedStatement = connection.prepareStatement(query);
+			preparedStatement.setString(1, firstName);
+			preparedStatement.setString(2, lastName);
+			preparedStatement.setString(3, phoneNo);
+			preparedStatement.setString(4, email);
+			preparedStatement.setInt(5, addressId);
+			preparedStatement.setInt(6, typeId);
+			preparedStatement.setInt(7, bookId);
+			preparedStatement.setString(8, dateAdded);
+			preparedStatement.executeUpdate();
+			String sql = "SELECT person_id FROM contact_person_details where first_name = ? and last_name= ?;";
+			preparedStatement = connection.prepareStatement(sql);
+			preparedStatement.setString(1, firstName);
+			preparedStatement.setString(2, lastName);
+			ResultSet resultSet = preparedStatement.executeQuery();
+			resultSet.next();
+			int personId = resultSet.getInt("person_id");
+			addAddressDetails(addressId, address, cityName, stateName, zip, connection);
+			return new ContactPersonDB(personId, firstName, lastName, phoneNo, email, addressId, typeId, bookId,
+					LocalDate.parse(dateAdded, DateTimeFormatter.ofPattern("yyyy-MM-dd")));
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				connection.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		return null;
+	}
+
+	private void addAddressDetails(int addressId, String address, String cityName, String stateName, String zip,
+			Connection connection) {
+		try {
+			String query = "insert into address_details values (?, ?, ?, ?, ?);";
+			preparedStatement = connection.prepareStatement(query);
+			preparedStatement.setInt(1, addressId);
+			preparedStatement.setString(2, address);
+			preparedStatement.setString(3, cityName);
+			preparedStatement.setString(4, stateName);
+			preparedStatement.setString(5, zip);
+			connection.commit();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
 }

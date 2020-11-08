@@ -70,9 +70,19 @@ public class AddressBookServiceTest {
 
 	// Retrieving Contacts from the Database by State
 	@Test
-	public void givenAddressBookData_whenFindContactsByState_shouldMatchContactsCount() {
+	public void givenAddressBookInDB_WhenRetrievedContactsByState_ShouldReturnExactCount() {
 		addressBookService.readContactPersonDetails(DB_IO);
 		List<ContactPersonDB> contactPersonList = addressBookService.getContactsByState(DB_IO, "U.P.");
 		Assert.assertEquals(5, contactPersonList.size());
+	}
+
+	// Adding new address book data into database
+	@Test
+	public void givenAddressBookData_WhenAdded_ShouldBeSyncWithDB() {
+		addressBookService.readContactPersonDetails(DB_IO);
+		addressBookService.addAddressBookDataInDB("Meera", "Devi", "9415829547", "meera3377@gmail.com", 23, 1, 104,
+				"2020-11-05", "Station Road", "Gwalior", "M.P.", "516899");
+		boolean result = addressBookService.checkContactPersonDetailsInSyncWithDB("Meera", "Devi");
+		Assert.assertTrue(result);
 	}
 }

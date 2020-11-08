@@ -1,5 +1,6 @@
 package com.bridgelabz.addressbookusingcsvandjson;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class AddressBookService {
@@ -12,6 +13,7 @@ public class AddressBookService {
 
 	public AddressBookService() {
 		addressBookDBService = AddressBookDBService.getInstance();
+		contactPersonList = new ArrayList<>();
 	}
 
 	public long getAddressBookName(IOService ioService) {
@@ -63,7 +65,10 @@ public class AddressBookService {
 
 	public boolean checkContactPersonDetailsInSyncWithDB(String firstName, String lastName) {
 		List<ContactPersonDB> contactPersonList = addressBookDBService.getContactPersonData(firstName, lastName);
-		return contactPersonList.get(0).equals(getContactPersonData(firstName, lastName));
+		if (contactPersonList.size() == 0)
+			return false;
+		else
+			return contactPersonList.get(0).equals(getContactPersonData(firstName, lastName));
 	}
 
 	public List<ContactPersonDB> getContactsByDateRange(String fromDate, String toDate) {
@@ -80,5 +85,11 @@ public class AddressBookService {
 		if (ioService.equals(IOService.DB_IO))
 			return addressBookDBService.getContactsByState(stateName);
 		return null;
+	}
+
+	public void addAddressBookDataInDB(String firstName, String lastName, String phoneNo, String email, int addressId,
+			int typeId, int bookId, String dateAdded, String address, String cityName, String stateName, String zip) {
+		contactPersonList.add(addressBookDBService.addAddressBookDataInDB(firstName, lastName, phoneNo, email,
+				addressId, typeId, bookId, dateAdded, address, cityName, stateName, zip));
 	}
 }
