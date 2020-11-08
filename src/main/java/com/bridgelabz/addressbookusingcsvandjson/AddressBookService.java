@@ -15,23 +15,32 @@ public class AddressBookService {
 	}
 
 	public long getAddressBookName(IOService ioService) {
-		return addressBookDBService.readAddressBookName();
+		if (ioService.equals(IOService.DB_IO))
+			return addressBookDBService.readAddressBookName();
+		return 0;
 	}
 
 	public long getAddressBookType(IOService ioService) {
-		return addressBookDBService.readAddressBookType();
+		if (ioService.equals(IOService.DB_IO))
+			return addressBookDBService.readAddressBookType();
+		return 0;
 	}
 
 	public long getAddressDetails(IOService ioService) {
-		return addressBookDBService.readAddressDetails();
+		if (ioService.equals(IOService.DB_IO))
+			return addressBookDBService.readAddressDetails();
+		return 0;
 	}
 
 	public long getContactPersonDetails(IOService ioService) {
-		return addressBookDBService.readContactPersonDetails().size();
+		if (ioService.equals(IOService.DB_IO))
+			return addressBookDBService.readContactPersonDetails().size();
+		return 0;
 	}
 
 	public void readContactPersonDetails(IOService ioService) {
-		contactPersonList = addressBookDBService.readContactPersonDetails();
+		if (ioService.equals(IOService.DB_IO))
+			contactPersonList = addressBookDBService.readContactPersonDetails();
 	}
 
 	public void updatePhoneNoInDB(String firstName, String lastName, String phoneNo) {
@@ -57,7 +66,19 @@ public class AddressBookService {
 		return contactPersonList.get(0).equals(getContactPersonData(firstName, lastName));
 	}
 
-	public List<ContactPersonDB> findContactPersonByDateRange(String fromDate, String toDate) {
-		return addressBookDBService.findContactPersonByDateRange(fromDate, toDate);
+	public List<ContactPersonDB> getContactsByDateRange(String fromDate, String toDate) {
+		return addressBookDBService.getContactsByDateRange(fromDate, toDate);
+	}
+
+	public List<ContactPersonDB> getContactsByCity(IOService ioService, String cityName) {
+		if (ioService.equals(IOService.DB_IO))
+			return addressBookDBService.getContactsByCity(cityName);
+		return null;
+	}
+
+	public List<ContactPersonDB> getContactsByState(IOService ioService, String stateName) {
+		if (ioService.equals(IOService.DB_IO))
+			return addressBookDBService.getContactsByState(stateName);
+		return null;
 	}
 }

@@ -84,9 +84,9 @@ public class AddressBookDBService {
 
 	public List<ContactPersonDB> readContactPersonDetails() {
 		String query = "SELECT * FROM contact_person_details;";
-		try {
-			Statement statement = this.getConnection().createStatement();
-			ResultSet resultSet = statement.executeQuery(query);
+		try (Connection con = this.getConnection();) {
+			preparedStatement = con.prepareStatement(query);
+			ResultSet resultSet = preparedStatement.executeQuery();
 			return this.getContactPersonList(resultSet);
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -95,9 +95,9 @@ public class AddressBookDBService {
 	}
 
 	public List<ContactPersonDB> getContactPersonData(String firstName, String lastName) {
-		try {
-			String query = "select * from contact_person_details where first_name = ? and last_name =?;";
-			preparedStatement = this.getConnection().prepareStatement(query);
+		String query = "select * from contact_person_details where first_name = ? and last_name =?;";
+		try (Connection con = this.getConnection();) {
+			preparedStatement = con.prepareStatement(query);
 			preparedStatement.setString(1, firstName);
 			preparedStatement.setString(2, lastName);
 			ResultSet resultSet = preparedStatement.executeQuery();
@@ -132,8 +132,8 @@ public class AddressBookDBService {
 
 	public int updatePhoneNo(String firstName, String lastName, String phoneNo) {
 		String query = "update contact_person_details set phone_no = ? where first_name = ? and last_name =?;";
-		try {
-			preparedStatement = this.getConnection().prepareStatement(query);
+		try (Connection con = this.getConnection();) {
+			preparedStatement = con.prepareStatement(query);
 			preparedStatement.setString(1, phoneNo);
 			preparedStatement.setString(2, firstName);
 			preparedStatement.setString(3, lastName);
@@ -144,12 +144,38 @@ public class AddressBookDBService {
 		return 0;
 	}
 
-	public List<ContactPersonDB> findContactPersonByDateRange(String fromDate, String toDate) {
+	public List<ContactPersonDB> getContactsByDateRange(String fromDate, String toDate) {
 		String query = "select * from contact_person_details where date_added between Cast(? as Date) and Cast(? as Date)";
-		try {
-			preparedStatement = this.getConnection().prepareStatement(query);
+		try (Connection con = this.getConnection();) {
+			preparedStatement = con.prepareStatement(query);
 			preparedStatement.setString(1, fromDate);
 			preparedStatement.setString(2, toDate);
+			ResultSet resultSet = preparedStatement.executeQuery();
+			return this.getContactPersonList(resultSet);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	public List<ContactPersonDB> getContactsByCity(String cityName) {
+		String query = "select * from contact_person_details c, address_details a where c.ad_id = a.address_id and city = ?;";
+		try (Connection con = this.getConnection();) {
+			preparedStatement = con.prepareStatement(query);
+			preparedStatement.setString(1, cityName);
+			ResultSet resultSet = preparedStatement.executeQuery();
+			return this.getContactPersonList(resultSet);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	public List<ContactPersonDB> getContactsByState(String stateName) {
+		String query = "select * from contact_person_details c, address_details a where c.ad_id = a.address_id and state = ?;";
+		try (Connection con = this.getConnection();) {
+			preparedStatement = con.prepareStatement(query);
+			preparedStatement.setString(1, stateName);
 			ResultSet resultSet = preparedStatement.executeQuery();
 			return this.getContactPersonList(resultSet);
 		} catch (SQLException e) {

@@ -56,8 +56,23 @@ public class AddressBookServiceTest {
 	// Retrieving Contacts from the Database that were added in a particular period
 	@Test
 	public void givenDateRange_WhenRetrieved_ShouldReturnExactCount() {
-		List<ContactPersonDB> contactPersonList = addressBookService
-				.findContactPersonByDateRange("2019-04-01", "2020-11-04");
+		List<ContactPersonDB> contactPersonList = addressBookService.getContactsByDateRange("2019-04-01", "2020-11-04");
+		Assert.assertEquals(5, contactPersonList.size());
+	}
+
+	// Retrieving Contacts from the Database by City
+	@Test
+	public void givenAddressBookInDB_WhenRetrievedContactsByCity_ShouldReturnExactCount() {
+		addressBookService.readContactPersonDetails(DB_IO);
+		List<ContactPersonDB> contactPersonList = addressBookService.getContactsByCity(DB_IO, "Varanasi");
+		Assert.assertEquals(3, contactPersonList.size());
+	}
+
+	// Retrieving Contacts from the Database by State
+	@Test
+	public void givenAddressBookData_whenFindContactsByState_shouldMatchContactsCount() {
+		addressBookService.readContactPersonDetails(DB_IO);
+		List<ContactPersonDB> contactPersonList = addressBookService.getContactsByState(DB_IO, "U.P.");
 		Assert.assertEquals(5, contactPersonList.size());
 	}
 }
