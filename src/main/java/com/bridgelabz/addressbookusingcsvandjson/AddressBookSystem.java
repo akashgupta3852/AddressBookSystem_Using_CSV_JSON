@@ -260,12 +260,8 @@ public class AddressBookSystem {
 			// Reading data from JSON
 			if (option.equals("17")) {
 				int x=0;
-				try {
 					x=jsonService.readJson();
 					System.out.println(x);
-				} catch (Exception e) {
-					System.out.println(e.getMessage());
-				}
 				continue;
 			}
 

@@ -1,5 +1,6 @@
 package com.bridgelabz.addressbookusingcsvandjson;
 
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
@@ -27,7 +28,7 @@ public class OpenCSVService {
 			List<ContactPerson> contactDeatilsList = me.getValue().stream().collect(Collectors.toList());
 			contactList.addAll(contactDeatilsList);
 		}
-		try (Writer writer = Files.newBufferedWriter(Paths.get(STRING_ARRAY_SAMPLE));) {
+		try (Writer writer = new FileWriter(STRING_ARRAY_SAMPLE);) {
 			StatefulBeanToCsv<ContactPerson> beanToCsv = new StatefulBeanToCsvBuilder<ContactPerson>(writer).build();
 			beanToCsv.write(contactList);
 		} catch (CsvRequiredFieldEmptyException e) {

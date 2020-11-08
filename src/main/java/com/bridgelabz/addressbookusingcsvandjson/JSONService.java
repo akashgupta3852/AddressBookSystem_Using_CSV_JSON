@@ -6,6 +6,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -33,7 +34,6 @@ public class JSONService {
 		FileWriter writer = new FileWriter(STRING_ARRAY_SAMPLE);
 		writer.write(json);
 		writer.close();
-		System.out.println("123");
 	}
 
 	// Method for Read JSON file
@@ -41,8 +41,7 @@ public class JSONService {
 		int count = 0;
 		try {
 			Reader reader = Files.newBufferedReader(Paths.get(STRING_ARRAY_SAMPLE));
-			List<ContactPerson> addresBook = new Gson().fromJson(reader, new TypeToken<List<ContactPerson>>() {
-			}.getType());
+			List<ContactPerson> addresBook = new Gson().fromJson(reader, new TypeToken<List<ContactPerson>>() {}.getType());
 			Iterator<ContactPerson> jsonIterator = addresBook.iterator();
 
 			while (jsonIterator.hasNext()) {
@@ -51,7 +50,7 @@ public class JSONService {
 				System.out.println("First Name : " + adressBook.getFirstName());
 				System.out.println("Last Name : " + adressBook.getLastName());
 				System.out.println("Address: " + adressBook.getAddress());
-				System.out.println("City : " + adressBook.getCity());
+				System.out.println("City : " +  adressBook.getCity());
 				System.out.println("State : " + adressBook.getState());
 				System.out.println("Zip : " + adressBook.getZip());
 				System.out.println("Number : " + adressBook.getPhoneNo());

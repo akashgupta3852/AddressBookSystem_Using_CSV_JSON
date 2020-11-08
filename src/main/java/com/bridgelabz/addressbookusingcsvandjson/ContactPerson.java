@@ -1,10 +1,17 @@
 package com.bridgelabz.addressbookusingcsvandjson;
 
 public class ContactPerson {
-	private String firstName, lastName, address, city, state;
+	private String firstName; 
+	private String lastName;
+	private String address; 
+	private String city; 
+	private String state; 
 	private int zip;
 	private long phoneNo;
 	private String emailId;
+
+	public ContactPerson() {
+	}
 
 	public String getFirstName() {
 		return firstName;
