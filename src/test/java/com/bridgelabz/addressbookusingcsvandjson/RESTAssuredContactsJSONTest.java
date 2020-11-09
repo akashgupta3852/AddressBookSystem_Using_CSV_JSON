@@ -25,13 +25,12 @@ public class RESTAssuredContactsJSONTest {
 	// Getting the list of contact persons from the Json server
 	public ContactPerson[] getContactPersonList() {
 		Response response = RestAssured.get("/contacts");
-		System.out.println("EMPLOYEE PAYROLL ENTRIES IN JSONServer:\n" + response.asString());
 		ContactPerson[] arrayOfContactPersons = new Gson().fromJson(response.asString(), ContactPerson[].class);
 		return arrayOfContactPersons;
 	}
 
 	// Getting response object after adding a person's contact to the Json server
-	public Response addEmployeeToJsonServer(ContactPerson contactPerson) {
+	public Response addContactsToJsonServer(ContactPerson contactPerson) {
 		String contactPersonJson = new Gson().toJson(contactPerson);
 		RequestSpecification request = RestAssured.given();
 		request.header("Content-Type", "application/json");
@@ -49,7 +48,7 @@ public class RESTAssuredContactsJSONTest {
 		Assert.assertEquals(2, entries);
 	}
 
-	// Writing the persons contact to Json server
+	// Writing the person's contact to the Json server
 	@Test
 	public void givenNewPersonsContact_WhenAdded_ShouldMatch201ResponseAndCount() {
 		ContactPerson[] arrayOfContactPersons = getContactPersonList();
@@ -58,12 +57,34 @@ public class RESTAssuredContactsJSONTest {
 		ContactPerson contactPerson = null;
 		contactPerson = new ContactPerson("Abhishek", "Gupta", "Brahmasthan", "Rasra", "U.P.", 221712, 7275339746l,
 				"abhish123@gmail.com");
-		Response response = addEmployeeToJsonServer(contactPerson);
+		Response response = addContactsToJsonServer(contactPerson);
 		int statusCode = response.getStatusCode();
 		Assert.assertEquals(201, statusCode);
 		contactPerson = new Gson().fromJson(response.asString(), ContactPerson.class);
 		addressBookService.addContactPerson(contactPerson, REST_IO);
 		long entries = addressBookService.countEntries(REST_IO);
 		Assert.assertEquals(3, entries);
+	}
+
+	// Writing the multiple person's contacts to the Json server
+	@Test
+	public void givenListOfContacts_WhenAdded_ShouldMatch201ResponseAndCount() {
+		ContactPerson[] arrayOfContactPersons = getContactPersonList();
+		AddressBookService addressBookService;
+		addressBookService = new AddressBookService(Arrays.asList(arrayOfContactPersons));
+		ContactPerson[] arrOfcontacts = { 
+				new ContactPerson("Meera", "Gupta", "Gudari Bazar", "Rasra", "U.P.", 221712, 9475986231l, "meera3377@gmail.com"),
+				new ContactPerson("Radha", "Gupta", "Kakadeo", "Kanpur", "U.P.", 141891, 8932339795l, "radha007@gmail.com"),
+				new ContactPerson("Khusbu", "Gupta", "Gudari Bazar", "Rasra", "U.P.", 221712, 7789346593l, "khusbu89563@gmail.com")
+				};
+		for (ContactPerson contactPerson : arrOfcontacts) {
+			Response response = addContactsToJsonServer(contactPerson);
+			int statusCode = response.getStatusCode();
+			Assert.assertEquals(201, statusCode);
+			contactPerson = new Gson().fromJson(response.asString(), ContactPerson.class);
+			addressBookService.addContactPerson(contactPerson, REST_IO);
+		}
+		long entries = addressBookService.countEntries(REST_IO);
+		Assert.assertEquals(6, entries);
 	}
 }
