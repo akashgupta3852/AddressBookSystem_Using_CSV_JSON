@@ -42,9 +42,8 @@ public class RESTAssuredContactsJSONTest {
 	@Test
 	public void givenPersonsContactInJsonServer_WhenRetrieved_ShouldMatchTheCount() {
 		ContactPerson[] arrayOfEmps = getContactPersonList();
-		AddressBookService employeePayrollService;
-		employeePayrollService = new AddressBookService(Arrays.asList(arrayOfEmps));
-		long entries = employeePayrollService.countEntries(REST_IO);
+		AddressBookService addressBookService = new AddressBookService(Arrays.asList(arrayOfEmps));
+		long entries = addressBookService.countEntries(REST_IO);
 		Assert.assertEquals(2, entries);
 	}
 
@@ -52,8 +51,7 @@ public class RESTAssuredContactsJSONTest {
 	@Test
 	public void givenNewPersonsContact_WhenAdded_ShouldMatch201ResponseAndCount() {
 		ContactPerson[] arrayOfContactPersons = getContactPersonList();
-		AddressBookService addressBookService;
-		addressBookService = new AddressBookService(Arrays.asList(arrayOfContactPersons));
+		AddressBookService addressBookService = new AddressBookService(Arrays.asList(arrayOfContactPersons));
 		ContactPerson contactPerson = null;
 		contactPerson = new ContactPerson("Abhishek", "Gupta", "Brahmasthan", "Rasra", "U.P.", 221712, 7275339746l,
 				"abhish123@gmail.com");
@@ -70,8 +68,7 @@ public class RESTAssuredContactsJSONTest {
 	@Test
 	public void givenListOfContacts_WhenAdded_ShouldMatch201ResponseAndCount() {
 		ContactPerson[] arrayOfContactPersons = getContactPersonList();
-		AddressBookService addressBookService;
-		addressBookService = new AddressBookService(Arrays.asList(arrayOfContactPersons));
+		AddressBookService addressBookService = new AddressBookService(Arrays.asList(arrayOfContactPersons));
 		ContactPerson[] arrOfcontacts = { 
 				new ContactPerson("Meera", "Gupta", "Gudari Bazar", "Rasra", "U.P.", 221712, 9475986231l, "meera3377@gmail.com"),
 				new ContactPerson("Radha", "Gupta", "Kakadeo", "Kanpur", "U.P.", 141891, 8932339795l, "radha007@gmail.com"),
@@ -86,5 +83,21 @@ public class RESTAssuredContactsJSONTest {
 		}
 		long entries = addressBookService.countEntries(REST_IO);
 		Assert.assertEquals(6, entries);
+	}
+	
+	// Updating the person's contact on the Json server
+	@Test
+	public void givenNewSalaryForEmployee_WhenUpdated_ShouldMatch200Response() {
+		ContactPerson[] arrayOfContactPersons = getContactPersonList();
+		AddressBookService addressBookService = new AddressBookService(Arrays.asList(arrayOfContactPersons));
+		addressBookService.updateZip("Radha", "Gupta", 230178);
+		ContactPerson contactPerson = addressBookService.getContactPersonDataFromJson("Radha", "Gupta");
+		String contactPersonJson = new Gson().toJson(contactPerson);
+		RequestSpecification request = RestAssured.given();
+		request.header("Content-Type", "application/json");
+		request.body(contactPersonJson);
+		Response response = request.put("/contacts/" + contactPerson.getId());
+		int statusCode = response.getStatusCode();
+		Assert.assertEquals(200, statusCode);
 	}
 }

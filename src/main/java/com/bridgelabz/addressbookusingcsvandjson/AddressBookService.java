@@ -161,4 +161,21 @@ public class AddressBookService {
 		if (ioService.equals(IOService.REST_IO))
 			contactPersonList.add(contactPerson);
 	}
+
+	// Updating zip of a contact person on the Json server
+	public void updateZip(String firstName, String lastName, int zip) {
+		ContactPerson contactPerson = this.getContactPersonDataFromJson(firstName, lastName);
+		if (contactPerson != null) {
+			contactPerson.setZip(zip);
+		}
+	}
+
+	// Retrieving contacts from the Json server
+	public ContactPerson getContactPersonDataFromJson(String firstName, String lastName) {
+		ContactPerson contactPerson = this.contactPersonList.stream()
+				.filter(contactPersonListItem -> contactPersonListItem.getFirstName().equals(firstName)
+						&& contactPersonListItem.getLastName().equals(lastName))
+				.findFirst().orElse(null);
+		return contactPerson;
+	}
 }
