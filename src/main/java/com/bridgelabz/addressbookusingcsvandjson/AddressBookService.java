@@ -178,4 +178,10 @@ public class AddressBookService {
 				.findFirst().orElse(null);
 		return contactPerson;
 	}
+
+	// Deleting contact from the Json server
+	public void deleteContactFromJson(String firstName, String lastName) {
+		ContactPerson contactPerson = this.getContactPersonDataFromJson(firstName, lastName);
+		contactPersonList.remove(contactPerson);
+	}
 }

@@ -69,11 +69,13 @@ public class RESTAssuredContactsJSONTest {
 	public void givenListOfContacts_WhenAdded_ShouldMatch201ResponseAndCount() {
 		ContactPerson[] arrayOfContactPersons = getContactPersonList();
 		AddressBookService addressBookService = new AddressBookService(Arrays.asList(arrayOfContactPersons));
-		ContactPerson[] arrOfcontacts = { 
-				new ContactPerson("Meera", "Gupta", "Gudari Bazar", "Rasra", "U.P.", 221712, 9475986231l, "meera3377@gmail.com"),
-				new ContactPerson("Radha", "Gupta", "Kakadeo", "Kanpur", "U.P.", 141891, 8932339795l, "radha007@gmail.com"),
-				new ContactPerson("Khusbu", "Gupta", "Gudari Bazar", "Rasra", "U.P.", 221712, 7789346593l, "khusbu89563@gmail.com")
-				};
+		ContactPerson[] arrOfcontacts = {
+				new ContactPerson("Meera", "Gupta", "Gudari Bazar", "Rasra", "U.P.", 221712, 9475986231l,
+						"meera3377@gmail.com"),
+				new ContactPerson("Radha", "Gupta", "Kakadeo", "Kanpur", "U.P.", 141891, 8932339795l,
+						"radha007@gmail.com"),
+				new ContactPerson("Khusbu", "Gupta", "Gudari Bazar", "Rasra", "U.P.", 221712, 7789346593l,
+						"khusbu89563@gmail.com") };
 		for (ContactPerson contactPerson : arrOfcontacts) {
 			Response response = addContactsToJsonServer(contactPerson);
 			int statusCode = response.getStatusCode();
@@ -84,10 +86,10 @@ public class RESTAssuredContactsJSONTest {
 		long entries = addressBookService.countEntries(REST_IO);
 		Assert.assertEquals(6, entries);
 	}
-	
+
 	// Updating the person's contact on the Json server
 	@Test
-	public void givenNewSalaryForEmployee_WhenUpdated_ShouldMatch200Response() {
+	public void givenNewZipForPersonContacts_WhenUpdated_ShouldMatch200Response() {
 		ContactPerson[] arrayOfContactPersons = getContactPersonList();
 		AddressBookService addressBookService = new AddressBookService(Arrays.asList(arrayOfContactPersons));
 		addressBookService.updateZip("Radha", "Gupta", 230178);
@@ -99,5 +101,20 @@ public class RESTAssuredContactsJSONTest {
 		Response response = request.put("/contacts/" + contactPerson.getId());
 		int statusCode = response.getStatusCode();
 		Assert.assertEquals(200, statusCode);
+	}
+
+	@Test
+	public void givenContactToDelete_WhenDeleted_ShouldMatch200ResponseAndCount() {
+		ContactPerson[] arrayOfContactPersons = getContactPersonList();
+		AddressBookService addressBookService = new AddressBookService(Arrays.asList(arrayOfContactPersons));
+		ContactPerson contactPerson = addressBookService.getContactPersonDataFromJson("Radha", "Gupta");
+		RequestSpecification request = RestAssured.given();
+		request.header("Content-Type", "application/json");
+		Response response = request.delete("/contacts/" + contactPerson.getId());
+		int statusCode = response.getStatusCode();
+		Assert.assertEquals(200, statusCode);
+		addressBookService.deleteContactFromJson("Radha", "Gupta");
+		long entries = addressBookService.countEntries(REST_IO);
+		Assert.assertEquals(5, entries);
 	}
 }
